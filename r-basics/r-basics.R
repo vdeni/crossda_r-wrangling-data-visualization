@@ -204,52 +204,68 @@ our.animals[length(our.animals)]
 # assing values to parameters of functions. Keep this distinction in mind; `=` is
 # very different from `==`!
 
-##### Tipovi varijabli
+#######################
+##### Value types #####
+#######################
 
-# R razlikuje nekoliko osnovnih tipova podataka:
-# - `character` : "stringovi", tj. tekstualni podaci. Npr. `'patka'`
-# - `integer` : cijeli brojevi. Npr. `1`
-# - `numeric` : realni brojevi. Npr. `1.161`
-# - `logical` : logičke vrijednosti. Postoje ukupno dvije - `TRUE` (može se
-# kratiti u `T`) i `FALSE` (može se kratiti u `F`)
-# Pogledat ćemo nekoliko primjera ovih tipova, te vidjeti kako možemo provjeriti
-# kojeg je neka varijabla ili vrijednost tipa.
+# R has several basic types of values:
+# - `character`: these are textual values, also known as "strings". For example,
+# `duck` is of type character. We can check this using the `is.character` function.
+# - `integer`: these are integers. For example, values `0`, `-1` or `5` are all
+# integers, but `0.5` is not.
+# - `double`: the set of real numbers. For example, `0.5` is `double`. However,
+# R's default is to consider all numbers to be `double`, so even `1` would be
+# `double`, unless R is told otherwise. To force R to consider `1` as an integer,
+# we'd write `1L`. A bit more on that later.
+# - `logical` : these are logical values, of which there's exactly two - `TRUE`
+# (which can be written as `T` for short), and `FALSE` (which can be written
+# `F` for short). Keep in mind that the capitalization has to be respected!
+# `false` or `False` have no meaning to R, unless we use it as a variable name.
 
-# Da bismo provjerili je li neka vrijednost character, koristimo `is.character()`
+# Not, let's take a look at some of these types, and see how we can check whether
+# a certain value has a certain type.
 
-is.character('susjed')
-is.character(domace_zivotinje[4])
+# There's a wide set of `is.something(x)` functions that we can use to check
+# whether object `x` is of type `something`. These functions return `TRUE` or
+# `FALSE` depending on whether the object `x` is of type `something` or not.
+# For example, to check whether a value is of type `character`,
+# we'd use `is.character`:
+
+is.character('duck')
+is.character(our.animals[4])
 is.character(1)
 
-# Kod `integer` i `numeric` tipova postoje neke specifičnosti.
-# Da bismo provjerili je li neka vrijednost integer koristimo `is.integer()`:
+# Now to the numbers. To check whether a value is of type `integer`, we use
+# `is.integer`. However, remember what we've said earlier: by default R considers
+# all numbers to be of the type `double`
 
 is.integer(1)
+is.double(1)
 
-# Pozivanje funkcije `is.integer()` s vrijednosti `1` vraća `FALSE`. To je zato
-# jer R brojeve automatski sprema kao `numeric`.
-
-# Kako bismo natjerali R da nam da `integer` vrijednost, možemo staviti `L` na
-# kraj broja:
+# But if we append `L` to a number, R will treat it as an integer.
 
 is.integer(1L)
+is.double(1L)
 
-# Ovo je zgodno znati jer se može dogoditi da funkcija traži `integer`, ali
-# odbija prihvatiti (recimo) `5` kao odgovarajuću vrijednost.
+# This is not something that's cruical to your usage of R. We're covering it for
+# completeness, but also because you *may* find yourself in a situation where you
+# really do need an integer. Now, you'll know how to do it.
 
-# Kako bismo provjerili je li neka vrijednost `numeric` koristimo
-# `is.numeric()`:
+# There's also the `is.numeric` function, which tells us whether a value is a
+# number. It returns true both for `1.5` and for `1L` because they're both numeric
+# values.
 
-is.numeric(1.5115)
+is.numeric(1.5)
+is.numeric(1L)
 
-# Za pisanje decimalnih brojeva *moramo koristiti točku* jer se zarez koristi za
-# odvajanje argumenata u funkcijama.
+# Keep in mind: we *must* use a decimal *point* when writing decimal numbers.
+# R will complain if we try using a comma.
 
 is.numeric(1,4141)
 
 1,5151 + 1
 
-# Posljednji tip je `logical`:
+# The last type we'll cover is `logical`:
 
 TRUE == T
 FALSE == F
@@ -258,10 +274,11 @@ is.logical(TRUE)
 
 is.logical(F)
 
-# Nakon upoznavanja s osnovnim tipovima vrijednosti i varijabli, pogledat ćemo
-# osnovne strukture podataka.
+# Next, we take a look at some of the basic data structures in R.
 
-##### Strukture podataka
+###########################
+##### Data structures #####
+###########################
 
 # Strukture podataka su formati organiziranja, upravljanja i spremanja podataka
 # koji omogućuju efikasno pristupanje podacima i njihovo modificiranje
