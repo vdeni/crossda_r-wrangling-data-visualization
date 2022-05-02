@@ -217,10 +217,11 @@ our.animals[length(our.animals)]
 # R's default is to consider all numbers to be `double`, so even `1` would be
 # `double`, unless R is told otherwise. To force R to consider `1` as an integer,
 # we'd write `1L`. A bit more on that later.
-# - `logical` : these are logical values, of which there's exactly two - `TRUE`
-# (which can be written as `T` for short), and `FALSE` (which can be written
-# `F` for short). Keep in mind that the capitalization has to be respected!
-# `false` or `False` have no meaning to R, unless we use it as a variable name.
+# - `logical` : these are logical values; the two that you'll probably know from
+# elsewhere are `TRUE` (which can be written as `T` for short), and `FALSE`
+# (which can be written `F` for short). Keep in mind that the capitalization has
+# to be respected! `false` or `False` have no meaning to R, unless we use it
+# as a variable name (which you should *not* be doing).
 
 # Not, let's take a look at some of these types, and see how we can check whether
 # a certain value has a certain type.
@@ -280,110 +281,164 @@ is.logical(F)
 ##### Data structures #####
 ###########################
 
-# Strukture podataka su formati organiziranja, upravljanja i spremanja podataka
-# koji omogućuju efikasno pristupanje podacima i njihovo modificiranje
-# Već smo se upoznali s jednim tipom strukture podataka u R-u, a to je vektor. R
-# ima nekoliko osnovnih struktura podataka. Ovdje ćemo proći kroz one koje se
-# najčešće javljaju.
+# Data structures are data organization, management and storage formats that allow
+# us to efficiently acces and modify data. We've already met one data structure -
+# the vector. R has several basic data structures. We'll cover those that appear
+# most often.
 
-# Za ponavljanje, stvorit ćemo novi vektor:
+# To start, let's remember the vector:
 
-c('vektor', 'od', '4', 'elementa')
+fruit <- c('apple', 'banana')
 
-# Možemo provjeriti je li neki objekt vektor koristeći `is.vector()`:
-is.vector(c('vektor', 'od', '4', 'elementa'))
+# We can check whether an object is a vector using `is.vector`:
 
-##### data.frame
+is.vector(fruit)
 
-# `data.frame` je vjerojatno najvažnija osnovna struktura (ili barem ona s kojom
-# ćete se najčešće družiti). On otprilike odgovara onom što možemo vidjeti u
-# *Data viewu* SPSS-a - sastoji se od redova koji predstavljaju jedinice analize
-# i stupaca koji predstavljaju varijable. Može sadržavati varijable koje su
-# različitih tipova (za razliku od nekih drugih struktura, poput vektora, koje
-# primaju samo jedan tip podataka).
+# One important thing to note regarding vectors is that they can contain only
+# values of a signle type. For example, we cannot have a vector where some values
+# are characters and others are numbers. If we were to mix the types of values
+# in a vector, R wouldn't neccessarily throw an error, but would first try to
+# convert the elements to a common type. For example, let's try creating a
+# vector of numbers; however, we'll put some of the numbers in quotation marks,
+# thereby making them characters (even though they contain digits).
 
-# `data.frame` možemo stvoriti koristeći istoimenu funkciju:
+is.numeric('1')
 
-data.frame(brojke = c(1, 2, 3, 4, 5),
-           'slova' = c('a', 'b', 'd', 'c', 'f'),
-           'logike'= c(F, F, T, T, F))
+numbers_vector <- c('1', 2, 3)
 
-# Pri stvaranju novog `data.framea`, svi redovi moraju imati vrijednosti na svim
-# stupcima jer će se R inače požaliti.
+numbers_vector
 
-data.frame('brojke' = c(1, 2, 3, 4, 5),
-           'slova' = c('a', 'b', 'd', 'c', 'f'),
-           # maknuli smo zadnjji element (F) iz stupca 'logike'
-           'logike'= c(F, F, T, T))
+# We can see that the last two elements have been converted to characters,
+# so that all elements are of the same type. Which conversions happen, and when
+# is too broad a topic for this course, but just be aware that they *do* happen.
 
-# Tome možemo doskočiti tako što ćemo eksplicitno neku vrijednost proglasiti
-# nedostajućom, što činimo pomoću posebne vrijednosti `NA`:
+######################
+##### data.frame #####
+######################
 
-data.frame('brojke' = c(1, 2, 3, 4, 5),
-           'slova' = c('a', 'b', 'd', 'c', 'f'),
-           # umjesto posljednjeg elementa u stupcu 'logike' stavili smo NA
-           'logike'= c(F, F, T, T, NA))
+# `data.frame`s are one of the most important data structures in R (or at least
+# one with which you'll be spending a lot of time). A `data.frame` roughly
+# corresponds to what you've probably been used to seeing in SPSS's 'Data view'
+# or MS Excel. A `data.frame` has rows which represent our units of analysis,
+# and columns which represent variables. Each variable in a `data.frame` has to
+# contain values of the same type, but different variables can hold different
+# types of values. So, for example, we can have one column with `character` values
+# and another one with `integer` values.
 
-# Spremit ćemo ovaj data.frame u varijablu brojke_i_slova. Primijetite da smo
-# sad pri definiranju vrijednosti stupca `brojke` koristili sintaksu `n:m`. Ta
-# sintaksa nam daje niz brojeva između n i m.
+# We can create a `data.frame` by using the `data.frame` function. This is not
+# something you'll usually do in your day-to-day work; you'll probably use some
+# other function to read data from an external file (like an XLSX file), and
+# that function will return a `data.frame`. We'll see this later on. However,
+# there are times when you'd like to create a small `data.frame`, and this is
+# how you could do it:
 
-brojke_i_slova <- data.frame('brojke' = 1:5,
-                             'slova' = c('a', 'b', 'd', 'c', 'f'),
-                             'logike'= c(F, F, T, T, NA))
+data.frame(numbers = c(1, 2, 3, 4, 5),
+           'letters' = c('a', 'b', 'd', 'c', 'f'),
+           'logicals' = c(F, F, T, T, F))
 
-# Sad kad smo proširili `brojke_i_slova`, pogledat ćemo kako možemo pristupati
-# vrijednostima u `data.frameu`.
+# Note that the column names can be written either with or without quotes. I
+# prefer putting them in quotes, so that's what I'll be doing from now on.
 
-# Elementima možemo pristupati korištenjem uglatih zagrada, kao i kod vektora.
-# Pritom treba imati na umu da je `data.frame` *dvodimenzionalni objekt*, zbog
-# čega traži *dva indeksa* odvojena zarezom - *prvi* se odnosi na
-# *redove*, a *drugi* na *stupce*.
+# When we're creating a `data.frame` this way, all rows must have values in all
+# columns, otherwise R will throw an error:
 
-# Ako jedan od indeksa izostavimo, ali stavimo zarez, R će vratiti sve elemente
-# na odgovarajućem mjestu, odnosno vratit će sve redove ako izostavimo prvi
-# indeks i sve stupce ako izostavimo drugi indeks.
+data.frame('numbers' = c(1, 2, 3, 4, 5),
+           'letters' = c('a', 'b', 'd', 'c', 'f'),
+           # we removed the las values from the 'logicals' column
+           'logicals' = c(F, F, T, T))
 
-# svi stupci prvog  reda
-brojke_i_slova[1, ]
+# This is a good time to introduce you to R's `NA` value, which represents
+# missing data. So now, instead of writing a `F` or `T` value in the 'logicals'
+# column, we'll just put an `NA`.
 
-# svi redovi prvog stupca
-brojke_i_slova[, 1]
+data.frame('numbers' = c(1, 2, 3, 4, 5),
+           'letters' = c('a', 'b', 'd', 'c', 'f'),
+           # we've put an `NA` element as the last value
+           'logicals' = c(F, F, T, T, NA))
 
-# Ovdje također možemo koristiti `n:m` sintaksu za dohvaćanje raspona
-# vrijednosti. Na primjer, da bismo dohvatili prva tri reda i sve stupce
-# `brojki_i_slova`, napravili bismo sljedeće:
+# We'll store this `data.frame` to a variable named `nll` (numbers, letters,
+# logicals). Note that this time around we've used the 1:5 notation to create
+# the 'numbers' column. This notation can be used to create simple sequences of
+# integers in R. For example:
 
-# prva tri reda, svi stupci
-brojke_i_slova[1:3, ]
+1:5
 
-# Za dohvaćanje vrijednosti koje nisu uzastopne, možemo koristiti funkciju `c()`,
-# koju također možemo kombinirati s `n:m` sintaksom:
+nll <- data.frame('numbers' = 1:5,
+                  'letters' = c('a', 'b', 'd', 'c', 'f'),
+                  'logicals' = c(F, F, T, T, NA))
 
-# prvi red i redove 3 do 5, te stupce 1 i 3
-brojke_i_slova[c(1, 3:5), c(1, 3)]
+# We can access elements of a `data.frame` using square brackets, similarly as
+# we do with vectors. However, we have to keep in mind that `data.frame`s are
+# two-dimensional, which is why we have two indices - the first one indexing rows,
+# and the second one - separated from the first one by a comma - indexing
+# columns. For example, the code below returns the value found in the first row
+# and second column ('letters'):
 
-# Stupcima možemo pristupati i pomoću njihovih imena:
+nll[1, 2]
 
-brojke_i_slova[1:3, c('logike', 'brojke')]
+# If we put just one index, R will return the corresponding column:
 
-# Naposljetku, *jednom* određenom stupcu možemo pristupiti koristeći `$`
-# operator:
+nll[2]
 
-brojke_i_slova$logike
+# We obtain the same result if we leave out one of the indices, but put a comma
+# in the appropriate place.
 
-# Prije nego što prijeđemo na sljedeću strukturu podataka, upoznat ćemo se s
-# funkcijom `str()` (structure). To je funkcija koja kao input prima neki objekt
-# i vraća prikaz njegove strukture. Primjerice, možemo pogledati kakva je
-# struktura našeg `data.framea` `brojke_i_slova`.
+# All columns of the first row:
+nll[1, ]
 
-str(brojke_i_slova)
+# All rows of the second column
+nll[, 2]
 
-# R nas informira da je `brojke_i_slova` objekt tipa `data.frame` te da sadrži
-# 5 redova (`5 obs.`) i 3 varijable. Uz svaku varijablu naveden je njen tip te
-# je prikazano prvih nekoliko elemenata.
+# We can also use the `n:m` syntax to get a range of values. For example, we
+# can get the first three rows and all the columns:
 
-# Iduća struktura podataka koju ćemo pogledata je lista.
+nll[1:3, ]
+
+# We can also get non-consecutive values by combining the indices using `c`:
+
+# rows 1, 3, 4, 5 and columns 1 and 3
+nll[c(1, 3:5), c(1, 3)]
+
+# We can, actually, use anything that provides a valid index to get our rows
+# or columns:
+
+nll[2^2, ]
+
+# Columns can also be accessed by using their names
+
+nll[1:3, 'letters']
+nll[1:3, c('letters', 'numbers')]
+
+# Finally, there's two more ways in which we can access whole columns. We can
+# put a variable name in square brackets, without any commas:
+
+nll['letters']
+
+# And we can use the dollar sign operator:
+
+nll$letters
+
+# Note a subtle difference between the two: `nll['letters']` returned a
+# `data.frame`. We can check this using the `str` function, which shows us
+# the structure of an object:
+
+str(nll['letters'])
+
+# On the other hand, `nll$letters` returned a vector of characters:
+
+str(nll$letters)
+
+# There is, however, yet another way of accessing `data.frame` columns, by
+# using double square brackets:
+
+nll[['letters']]
+
+# This returns the vector of characters, just as `$` does. We can think of the
+# `[]` notation as returning a more "high-level" type of object (in this case
+# a `data.frame`), while `[[]]` returns a more "low-level" type of object (in
+# this case a vector of characters).
+
+# Next, we turn to lists.
 
 ##### list
 
