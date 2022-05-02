@@ -440,53 +440,64 @@ nll[['letters']]
 
 # Next, we turn to lists.
 
-##### list
+################
+##### list #####
+################
 
-# Lista je uređeni skup elemenata. Listu možemo definirati koristeći funkciju
-# `list()`:
+# `list`s hold sets of elements, which can be of different types.
 
-list('franz', 'liszt')
+our_list <- list('dog',
+                 1L,
+                 3.14,
+                 TRUE)
 
-# Objekti u listi ne moraju biti istog tipa. Na primjer, možemo napraviti listu
-# koja sadrži jedan `character`, jedan `integer` i jedan `numeric`.
+our_list
 
-spisak <- list('franz', 1L, 3.14)
-spisak
+# The numbers in double square brackets (`[[n]]]`) tell us that we have a `list`
+# with four elements. We can confirm that by looking at the output of the `str`
+# function:
 
-# Brojevi u dvostrukim uglatim zagradama (`[[n]]`) daju nam do znanja da lista
-# ima 3 elementa. To možemo potvrditi pozivom funkcije `str()` na `spisku`.
+str(our_list)
 
-str(spisak)
+# `list`s can even contain other lists, and the elements of the list can be named.
 
-# Ovdje vidimo i da `spisak` sadrži elemente različitih tipova. Liste možemo
-# puniti raznolikim objektima, čak i drugim listama.
+various_objects <- list('letters' = c('A', 'B', 'C'),
+                        'numbers' = c(1, 2, 10:15),
+                        'lowercase_list' = list('a_to_c' = c('a', 'b', 'c'),
+                                                'd_to_f' = c('d', 'e', 'f')))
 
-# pojedine elemente listi možemo i imenovati
-raznoliki_objekti <- list('imena' = c('Ramiro', 'Zorro', 'Vladimir'),
-                          'brojevi' = c(3.61, 4.15, 7.151, 20:25),
-                          'inception' = list('glumci' = c('Leonardo di Caprio',
-                                                          'ostali'),
-                                             'broj_kamera' = 5))
+str(various_objects)
 
-str(raznoliki_objekti)
+# We can access the named elements of list the same way as with `data.frame`s:
 
-# Imenovanim elementima listi možemo pristupati isto kao i stupcima
-# `data.framea`:
+various_objects$letters
 
-raznoliki_objekti$imena
+various_objects['letters']
 
-raznoliki_objekti[2]
+# this returns a `list` with one element, which is a vector of numbers
+various_objects[2]
 
-# Također, možemo dohvatiti više elemenata odjednom.
+# this returns a vector of numbers
+various_objects[[2]]
 
-raznoliki_objekti[c('imena', 'brojevi')]
+# get multiple elements
+various_objects[c(1, 2)]
 
-# Kad imamo ugniježđene (eng. *nested*) strukture, možemo ulančavati operatore
-# za dohvaćanje kako bismo ušli dublje u strukture.
+# Note however, that we can use only a single index. Putting two causes an error:
+various_objects[2, 3]
 
-raznoliki_objekti$inception$glumci
+# When we have nested `list`s, as is the case with our 'lowercase_list', we can
+# concatenate the operators we use for getting values to get to the deeper
+# elements. For example:
 
-# Posljednja struktura koju ćemo pogledati je matrica.
+various_objects$lowercase_list$a_to_c
+
+# using square brackets can be a bit tricky, because we have to keep in mind
+# what's being returned when using single or double brackets. the code below
+# is equal to using `$`
+various_objects[['lowercase_list']][['a_to_c']]
+
+# The last data structure we will look at is a `matrix`.
 
 ##### matrix
 
