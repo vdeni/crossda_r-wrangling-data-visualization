@@ -82,7 +82,7 @@ c('duck', "cow", 'hedgehog', "bat")
 
 # Up until now, we've executed mathematical operations or functions, applying
 # them to specific, realized values (e.g. `2 + 2`). The results of these
-# operations were displyed in the R console, but weren't stored anywhere for
+# operations were displayed in the R console, but weren't stored anywhere for
 # easy usage. To be able to do more with R, we'll need to use variables.
 # Variables allow us to store the results of various operations or function calls,
 # or to pass variable values to them (like `x + y`).
@@ -101,7 +101,7 @@ a <- 2
 print(a)
 
 # We are not entirely free to choose our variable names. Variable names can
-# contain letters, numbers, dots (`.`), and underscors `_`. However, a variable
+# contain letters, numbers, dots (`.`), and underscore `_`. However, a variable
 # name cannot start with a number, nor can they start with a dot followed by
 # a number. R will complain in both cases.
 
@@ -191,7 +191,7 @@ our.animals[length(our.animals)]
 # properties; the values they store do.
 
 # Before moving on to the types of variables, we'll take a quick look at another
-# frequently used binary operator - `==`. This duble-equal operator allows us
+# frequently used binary operator - `==`. This double-equal operator allows us
 # to compare two values. If they're the same ("equal-equal") the operation returns
 # `TRUE`, and if they're different, the operation returns `FALSE`.
 # For example
@@ -201,7 +201,7 @@ our.animals[length(our.animals)]
 3 == 2 + 2
 
 # Note: as we will be seeing later, R also frequently uses the `=` symbol to
-# assing values to parameters of functions. Keep this distinction in mind; `=` is
+# assign values to parameters of functions. Keep this distinction in mind; `=` is
 # very different from `==`!
 
 #######################
@@ -248,7 +248,7 @@ is.double(1)
 is.integer(1L)
 is.double(1L)
 
-# This is not something that's cruical to your usage of R. We're covering it for
+# This is not something that's crucial to your usage of R. We're covering it for
 # completeness, but also because you *may* find yourself in a situation where you
 # really do need an integer. Now, you'll know how to do it.
 
@@ -282,7 +282,7 @@ is.logical(F)
 ###########################
 
 # Data structures are data organization, management and storage formats that allow
-# us to efficiently acces and modify data. We've already met one data structure -
+# us to efficiently access and modify data. We've already met one data structure -
 # the vector. R has several basic data structures. We'll cover those that appear
 # most often.
 
@@ -295,9 +295,9 @@ fruit <- c('apple', 'banana')
 is.vector(fruit)
 
 # One important thing to note regarding vectors is that they can contain only
-# values of a signle type. For example, we cannot have a vector where some values
+# values of a single type. For example, we cannot have a vector where some values
 # are characters and others are numbers. If we were to mix the types of values
-# in a vector, R wouldn't neccessarily throw an error, but would first try to
+# in a vector, R wouldn't necessarily throw an error, but would first try to
 # convert the elements to a common type. For example, let's try creating a
 # vector of numbers; however, we'll put some of the numbers in quotation marks,
 # thereby making them characters (even though they contain digits).
@@ -344,7 +344,7 @@ data.frame(numbers = c(1, 2, 3, 4, 5),
 
 data.frame('numbers' = c(1, 2, 3, 4, 5),
            'letters' = c('a', 'b', 'd', 'c', 'f'),
-           # we removed the las values from the 'logicals' column
+           # we removed the last values from the 'logicals' column
            'logicals' = c(F, F, T, T))
 
 # This is a good time to introduce you to R's `NA` value, which represents
@@ -499,74 +499,93 @@ various_objects[['lowercase_list']][['a_to_c']]
 
 # The last data structure we will look at is a `matrix`.
 
-##### matrix
+##################
+##### matrix #####
+##################
 
-# Matrica je 2D objekt koji sadrži elemente istog tipa. Možemo je stvoriti
-# koristeći funkciju `matrix()`.
+# Matrices are two-dimensional objects that contain elements of the same type.
+# A matrix can be created using the `matrix` function:
 
-postava <- matrix(c('Neo', 150, 'Morpheus', 165, 'Agent Smith', 140),
-                  # broj stupaca matrice
-                  ncol = 2,
-                  # broj redova matrice
-                  nrow = 3,
-                  # trebaju li se podaci upisivati red po red ili stupac po
-                  # stupac default je F
-                  byrow = T)
-postava
+our_matrix <- matrix(c('a', 'b', 'c',
+                       'd', 'e', 'f'),
+                     # number of columns of the matrix
+                     ncol = 2,
+                     # number of rows of the matrix
+                     nrow = 3,
+                     # should we fill the matrix by going over rows or columns
+                     byrow = T)
 
-# U primjeru iznad koristili smo `=` kako bismo *imenovali* argumente funkcije.
-# Ako pogledamo dokumentaciju za funkciju `matrix()`, vidjet ćemo da su oni,
-# redom, `data`, `nrow`, `ncol`, `byrow`. Da smo funkciju iz prethodnog primjera
-# pozvali bez imenovanja argumenata, R bi pretpostavio da se broj 2 odnosi na
-# broj redova, a broj 3 na broj stupaca jer je broj redova (`nrow`) prije broja
-# stupaca (`ncol`) u definiciji funkcije. Međutim, imenovanjem argumenata, mogli
-# smo zamijeniti redoslijed
+our_matrix
 
-# Dimenzije matrice možemo dohvatiti funkcijom `dim()`, koja je primijenjiva i na
-# `data.frame` (ali ne i na liste). Funkcija nam vraca dva broja; prvi je broj
-# redova, a drugi je broj stupaca.
+# In the example above, we've used `=` to pass named arguments to the `matrix`
+# function. If we take a look at the documentation entry for `matrix`, we'll see
+# that the arguments are `data`, `nrow`, `ncol` and `byrow`. If we were to pass
+# the arguments from the previous example without naming them, R would assume
+# that 2 is the number of desired rows, and 3 the number of desired columns,
+# because that is the order in which the arguments are listed in the function
+# definition. So, naming the arguments allowed us to pass them in an order
+# different from the one specified in the function definition. Additionally,
+# it increases the clarity of our code, since we instantly know which value is
+# provided to which argument. Typing up the parameter names is a bit of extra
+# work, but it's said that code is more often read than written, so your future
+# selves will be grateful for the additional time put into making the code clear.
 
-dim(postava)
+# Continuing with matrices: we can use the `dim` function to get the dimensions
+# of a `matrix` - a pair of (n, m) values, where n is the number of rows and m
+# the number of columns (we can do the same for `data.frame`s, but not for
+# `list`s).
 
-# Redovima i stupcima matrica možemo dati imena, radi lakšeg orijentiranja:
+dim(our_matrix)
 
-dimnames(postava) <- list(# imena redova
-    c('ozbiljni', 'pametni', 'zli'),
-    # imena stupaca
-    c('ime', 'visina'))
+# We can also name the rows and columns of our matrix to facilitate orientation.
+# These can be given by assigning a list of two elements (the first being
+# row names, and the second column names) to the return value of the `dimnames`
+# function (we won't go into the reason behind this seemingly bizarre pattern).
 
-postava
+dimnames(our_matrix) <- list(# row names
+                             c('row_1', 'row_2', 'row_3'),
+                             # column names
+                             c('column_1', 'column_2'))
 
-# Imena redova možemo dohvatiti funkcijom `rownames()`, a imena stupaca
-# funkcijom `colnames()`.
 
-rownames(postava)
+our_matrix
 
-colnames(postava)
+# We can get the row names and column names by the `rownames` and `colnames`
+# functions.
 
-# Iste funkcije možemo koristiti i na `data.frameu`.
+rownames(our_matrix)
 
-# Za dohvaćanje imena elemenata u listi možemo koristiti funkciju `names()`.
+colnames(our_matrix)
 
-names(raznoliki_objekti)
+# (Those can also be used on `data.frame`s. Note that `data.frame`s must have
+# column names, but do not need to have row names. To obtain the names
+# of the elements in a list, we can use `names`.)
 
-# Elementima matrice možemo pristupati pomoću `[]` operatora, ali ne i pomoću
-# `$` operatora. Također, pristupanje elementima pomoću indeksa nije isto kao
-# kod `data.framea`.
+# Elements of a `matrix` can be accessed with square brackets, but not by the
+# `$` operator. Furthermore, accessing `matrix` elements doesn't work exactly
+# the same way as with a `data.frame`. Let's look at an example. First, the
+# situations that are similar to `data.frame`s.
 
-# Naša matrica `postava` ima 3 reda i 2 stupca. Pogledajmo sljedeći primjer:
+# element in first row, second column
+our_matrix[1, 2]
 
-# matrica ima manje od 4 reda i manje od 4 stupca.
-# ipak, ovo funkcionira
-postava[1:4]
+# second and third elements of first and second column
+our_matrix[2:3, 1:2]
 
-# ovo također funkcionira
-postava[2:3, 1:2]
+# given that our `matrix` has row and column names, this also works:
+our_matrix['row_2', 'column_2']
+our_matrix[2:3, 'column_1']
 
-# i ovo
-postava[2:3, 'ime']
+# now, the `matrix` and `data.frame` differ in this: where our R throws
+# an error if we try to access more columns than there are in a `data.frame`:
+our_data_frame[1:4]
 
-# Ovdje se imena "redova" nalaze iznad svake vraćene vrijednosti (dakle, iznad
-# `"Morpheus"` i `"Agent Smith"`)
+# it doesn't complain when we try a similar thing in a matrix
+our_matrix[1:7]
 
-# Ovime ćemo završiti uvod u R te se baciti na pripremu podataka za obradu.
+# in general, giving a single index to square brackets for a matrix returns a
+# single value, not a column
+our_matrix[2]
+
+# Here, we'll conclude this introductory part and continue on to doing some
+# data wrangling.
