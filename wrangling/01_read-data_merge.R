@@ -170,6 +170,9 @@ data_waves_merged
 # CSV.
 
 # Here, we'll save the merged dataset to an external file.
+haven::write_sav(data_waves_merged,
+                 here::here('data',
+                            'data_waves-merged.sav'))
 
 # Also, we could simply `source` this script in another script. What this means
 # is that we'd call the `source` function with just a single argument - the
