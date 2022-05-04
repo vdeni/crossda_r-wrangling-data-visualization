@@ -120,7 +120,7 @@ dim(data_wave_3)
 # package. It returns similar information as `str` does, but may provide an
 # overview that's a bit clearer.
 
-glimpse(data_wave_1)
+dplyr::glimpse(data_wave_1)
 
 # Our first task is going to be to create one longitudinal dataset out of these
 # three. To do that, we'll take only the participants who've provided answers
