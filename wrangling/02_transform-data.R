@@ -387,3 +387,73 @@ dplyr::select(.,
 # we have renamed more than a thousand variables in a matter of seconds! This,
 # of course, wouldn't have been possible (or would have been much more
 # difficult) if variable names weren't structured this well.
+
+############################
+##### Summarising data #####
+############################
+
+# Finally, let's see how we can summarise our data. This part, of course, will
+# not be exhaustive as there are many ways to summarize a dataset. Instead
+# delving into the details of every possible summary, we'll take a look at
+# two functions that play nicely together: `summarize` and `group_by`.
+# What they do is fairly intuitive: `summarize` allows us to specify a set
+# of variables and to compute a given set of summary functions. `group_by`
+# allows us to group our data frame by a set of variables; we can later use
+# this grouping to calculate summary statistics for each group separately.
+
+# Let's start with the `summarise` function (you can use both `summarize` and
+# `summarise`). We have to provide the function with a data frame which we
+# wish to summarize, and pairs of expressions which have a column name for the
+# summary on the left hand side, and a summary function on the right hand side.
+# For example:
+
+dplyr::summarise(data_waves_merged,
+                 age_mean_t1 = mean(aage),
+                 age_median_t1 = median(aage))
+
+# We get back a `tibble` with the specified column names and values. This
+# `tibble` can than be used in further work; for plotting results, for example.
+# We can also use the selection helpers, by using `across`:
+
+dplyr::summarise(data_waves_merged,
+                 dplyr::across(dplyr::matches('^(a|b|c)age$'),
+                               list('mean' = mean)))
+
+# This works the same way as in `mutate`. So, we could expand this:
+
+dplyr::summarise(data_waves_merged,
+                 dplyr::across(dplyr::matches('^(a|b|c)(age|byear)$'),
+                               list('mean' = mean,
+                                    'sd' = sd)))
+
+# Now, onto grouping. After calling `group_by` with a data frame and a set of
+# grouping variables, we get back a grouped data frame object.
+
+. <- dplyr::group_by(data_waves_merged,
+                     asex)
+
+# We can then pass that grouped data frame to `summarize` to obtain summaries
+# by group:
+
+dplyr::summarise(.,
+                 age_t1_mean = mean(aage),
+                 n_t1 = dplyr::n())
+
+# The `n` function above is a nice helper function that returns the number of
+# cases in each group defined by `group_by`.
+
+# Remember that `group_by` creates a special grouped data frame object. If we
+# keep passing that object to various functions, the grouping will persist. This
+# may lead to unintended consequences - we could accidentally calculate summaries
+# or execute other functions by group instead of on the whole dataset. We can,
+# therefore, `ungroup` a data frame, to get rid of the groupings:
+
+dplyr::summarise(.,
+                 age_t1_mean = mean(aage),
+                 n_t1 = dplyr::n())
+
+. <- dplyr::ungroup(.)
+
+dplyr::summarise(.,
+                 age_t1_mean = mean(aage),
+                 n_t1 = dplyr::n())
