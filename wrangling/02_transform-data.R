@@ -10,6 +10,7 @@
 # We'll be using some of the libraries we've met earlier. Mostly, we'll be
 # relying on functions from the {dplyr} library.
 
+library(stringr)
 library(here)
 library(haven)
 library(dplyr)
@@ -200,3 +201,189 @@ dplyr::filter(data_waves_merged,
 
 dplyr::filter(data_waves_merged,
               dplyr::between(aage, 45, 65))
+
+################################
+##### Data transformations #####
+################################
+
+# Let's see how we can apply various transformations to our data. We'll be using
+# the column subsetting tools we've learned earlier extensively. {dplyr} provides
+# the `mutate` function, which we'll use to make changes to our dataset.
+
+# We'll start with something simple: let's try calculating each participants age
+# at the time of the first wave data collection based on the year of data
+# collection and the year of their birth. This data already exists in the `aage`
+# variable, but we'll do it anyway to see how it could be done.
+
+# An easy way to do it in base R is to define a new column using the `$` or `[]`
+# notation, and assign to it the difference between the year of data collection
+# and the participant's birth year:
+
+data_waves_merged$custom_age <- data_waves_merged$ayear - data_waves_merged$abyear
+
+# A {dplyr} way to do the same thing would be by using the `mutate` function,
+# which again lead to a bit cleaner code. This returns a whole data frame, so
+# we have to save the output to a variable; here, we're just overwriting the
+# initial `data_waves_merged` variable.
+
+data_waves_merged <- dplyr::mutate(data_waves_merged,
+                                   custom_age_alt = ayear - abyear)
+
+# We can see that the result is the same:
+sum(data_waves_merged$custom_age == data_waves_merged$custom_age_alt)
+
+# Here, we've obtained a vector of logical values by comparing the `custom_age`
+# variable to `custom_age_alt`. Calling the `sum` function on that vector of
+# logical values turned all the `TRUE`s into `1`s and all the `FALSE`s into
+# `0`s. Thus, the `sum` returns the number of `TRUE` values, i.e. the number
+# of rows for which the `custom_age` and `custom_age_alt` have the same value.
+# Since this sum is equal to the length of the vector (or the number of rows
+# of our data frame), we know that all the values are `TRUE`, i.e. that all the
+# values are equal.
+
+# One of the advantages of `mutate` over the base R way is that we can define
+# multiple columns in one function call. E.g.
+
+dplyr::mutate(data_waves_merged,
+              a_custom_age = ayear - abyear,
+              b_custom_age = byear - bbyear)
+
+# But `mutate` offers even more. We can select a subset of columns and apply a
+# function to all of them. Say that we're doing some polynomial regression, and
+# want to get an age-squared variable. We could do this in one swoop, by using
+# the `across` helper function:
+
+data_waves_merged <- dplyr::mutate(data_waves_merged,
+                                   dplyr::across(dplyr::matches('^(a|b|c)age$'),
+                                                 list('squared' = ~ .x^2)))
+
+dplyr::select(data_waves_merged,
+              dplyr::matches('^(a|b|c)age$|squared'))
+
+# We've encountered new notation -  `~`. We can use the tilda within `mutate` to
+# create calculations on the fly. When we do that, we use the `.x` symbol to
+# refer to the variable currently being processed. So what happens above is that
+# `across` selects the variables `aage`, `bage` and `cage`, and then supplies
+# each to the expression `.x^2` where `.x` gets replaced by `aage`, `bage` and
+# `cage` in turn. The output of this expression is then stored in a variable
+# that has the same base name as the original one (e.g. `aage`) but has a
+# suffix defined by the left hand side of the expression (we've put 'squared', so
+# `aage_squared`).
+
+# This approach is extremely powerful, since we can easily extend the choice of
+# variables (for example, by supplying additional patterns to `matches`) and
+# functions (by adding new elements to the `list`; note that we must use a `list`
+# for this to work, even if we have only a single function we'd like to call).
+# Note that we can also use the other helper functions for selection, not just
+# `matches`.
+
+# Note: I'm saving the output to the `.` variable. It's a completely valid
+# variable name, nothing special here. It's often used as a one-off, temporary
+# variable for results we don't want to keep for future work.
+
+# We have to put the variables we want to select within a vector with `c` since
+# we're using more than one way of variable selection AND since we're naming
+# specific variables `ayear` and `byear`.
+. <- dplyr::mutate(data_waves_merged,
+                   dplyr::across(c(ayear,
+                                   byear,
+                                   dplyr::matches('^(a|b|c)age$')),
+                                 list('squared' = ~ .x^2,
+                                      # we don't need the `~` notation here
+                                      # because `sqrt` is an existing function,
+                                      # so it's enough to provide its name
+                                      # without parentheses
+                                      'rooted' = sqrt)))
+
+dplyr::select(.,
+              ayear,
+              byear,
+              dplyr::matches('^(a|b|c)age$|squared|rooted'))
+
+# If we don't want to create new columns, but overwrite old ones, we have to
+# specify a single function, and we don't use a `list` and a prefix:
+
+. <- dplyr::mutate(data_waves_merged,
+                   dplyr::across(dplyr::matches('^(a|b|c)age$'),
+                                 ~ .x^2))
+
+dplyr::select(.,
+              dplyr::matches('^(a|b|c)age$'))
+
+##############################
+##### Renaming variables #####
+##############################
+
+# Sometimes we want to rename a variable, be it for clarity or convenience.
+# For example, our merged dataset has the variables `abyear`, `bbyear` and
+# `cbyear` which store each participant's year of birth. Let's rename those
+# so that the final names are `a_birth_year` and equivalently for the other two.
+
+# We can do this with the `rename` function. Note that, as `mutate` and the other
+# discussed functions, `rename` returns a `tibble`, so we'll have to store the
+# result somewhere in order for the changes to be written. We'll again use the
+# `.` variable name.
+
+. <- dplyr::rename(data_waves_merged,
+                   'a_birth_year' = 'abyear',
+                   'b_birth_year' = 'bbyear',
+                   'c_birth_year' = 'cbyear')
+
+dplyr::select(.,
+              dplyr::matches('birth'))
+
+# But there's also a shorter way. We can select multiple columns using the helpers
+# we've learned earlier and apply a change using a function. This is useful when
+# we want to do bulk variable renaming. Let's rename all variables from the first
+# wave so that they have a suffix `_t1` and don't have the prefix `a`.
+
+# First, we'll add the `_t1` suffix. To do that in bulk, we'll use the
+# `rename_with` function, which allows us to use `matches` and to specify a
+# renaming function. The function we'll use to add the suffix is `paste0`. This
+# is a simple base R function which takes two character strings and concatenates
+# them without any separator (such as whitespace) between them.
+
+paste0('a',
+       'b')
+
+# We can use the `~` notation when working with `rename_with`. So, to bulk add
+# the `_t1` suffix to our wave 1 variables, we do the following:
+
+. <- dplyr::rename_with(data_waves_merged,
+                        # we're specifying the argument names because the
+                        # order of these two is actually reversed, but I think
+                        # this is more intuitive
+                        .cols = dplyr::matches('^a'),
+                        .fn = ~ paste0(.x,
+                                       '_t1'))
+
+dplyr::select(.,
+              dplyr::matches('_t1$'))
+
+# Next, we'll remove the prefix `a` from the wave 1 variables. To do that,
+# we'll use the `str_replace` function from {stringr}.
+# `str_replace` allows us to specify a regex pattern, and a replacement pattern,
+# which will replace the first occurrence of the regex pattern with the
+# replacement. (There's also `str_replace_all` which replaces all occurrences
+# of the regex pattern with the replacement string). This is not the only way
+# we could do this, but it's fairly simple and a good chance to introduce
+# `str_replace`. So, we do the following:
+
+. <- dplyr::rename_with(.,
+                        # now we're looking for variables that have our suffix
+                        .cols = dplyr::matches('_t1$'),
+                        .fn = stringr::str_replace,
+                        # we don't need to use `~` to supply the `pattern` and
+                        # `replacement` arguments to `str_replace`. instead, we
+                        # can just list them further down in the `rename_with`
+                        # call. even though we can pass the arguments without
+                        # their names, I'd suggest always doing it if you're
+                        # passing arguments this way, since it may not be clear
+                        # what the values are referring to.
+                        pattern = '^a',
+                        replacement = '')
+
+# With just a few line of codes, and basic knowledge of regular expressions,
+# we have renamed more than a thousand variables in a matter of seconds! This,
+# of course, wouldn't have been possible (or would have been much more
+# difficult) if variable names weren't structured this well.
