@@ -310,6 +310,74 @@ dplyr::select(.,
 dplyr::select(.,
               dplyr::matches('^(a|b|c)age$'))
 
+###########################
+##### Recoding values #####
+###########################
+
+# You'll probably frequently find yourself wanting to map a variable's values
+# onto another set. For example, to map a continuous age variable onto a smaller
+# set of categories. Let's see how we could do this using {dplyr} functions.
+# We'll extract the `aage` variable to a separate `tibble`, so that we have a
+# clearer overview:
+
+. <- dplyr::select(data_waves_merged,
+                   aage)
+
+# {dplyr} offers the `case_when` function, which accepts a sequence of formulas.
+# These formulas have expressions evaluating to `TRUE` or `FALSE` on their left
+# hand side. On the right hand side, they have a value that's returned if the
+# corresponding left hand side evaluates to `TRUE`. Let's try to recode the
+# `aage` variable in three categories to see how this works.
+
+# First, we can look at the range of values recorded in the variable by using
+# the `range` function:
+
+range(.$aage)
+
+# So, the range is [17, 79]. Let's recode the variable into three categories,
+# as the principle is easily extended to more. We'll have the following mapping:
+# - [17, 40] => 1
+# - [41, 65] => 2
+# - [66, 79] => 3
+# We won't use `mutate` here, as I think that makes the code a bit clearer.
+# Instead, we'll use the base R way of creating a variable.
+
+# note that `case_when`, unlike e.g. `mutate`, doesn't take a data frame as its
+# first argument!
+.$age_recoded <- dplyr::case_when(dplyr::between(.$aage, 17, 40) ~ 1,
+                                  .$aage >= 41 & .$aage <= 65 ~ 2,
+                                  .$aage >= 66 & .$aage <= 79 ~ 3,
+                                  # this tells `case_when` to put the category
+                                  # for if none of the above conditions evaluates
+                                  # to `TRUE`
+                                  TRUE ~ 4)
+
+# As I've mentioned earlier, the expression on the left can be anything that
+# evaluates to `TRUE` or `FALSE`. That means that we can use all the operators
+# we've used earlier for filtering data, among others. In case we have a variable
+# of type character, we could also use `str_detect`, as it returns `TRUE` or
+# `FALSE` depending on whether a regular expression pattern was found or not.
+# This means that you could also use `case_when` to, for example, recode open
+# answers, into a smaller subset of values (e.g. recoding 'EU', 'European Union',
+# 'eu' and 'European union' to one value, 'European Union').
+
+# In the previous recoding example, we've recoded all answers that don't match
+# our ranges to the category '4'. However, we can also just leave those values
+# as is. Let's see how we would do this. To demonstrate, we'll change our
+# categories a bit. Instead of lumping everyone between 66 and 79 into one
+# category, we'll leave those values as they are. To do this, we repeat the
+# variable name on the right hand side of the expression where `TRUE` is on the
+# left hand side of the `~`. Note that we've wrapped `.$aage` in the `as.numeric`
+# function here. This function takes an argument and transforms in into the
+# `numeric` type. We had to do this because otherwise R complained (there's
+# most likely a conundrum with the types, given that `aage` is actually a labelled
+# variable, as it's been imported from SPSS). Try removing `as.numeric` to see
+# the error message you'll get.
+
+.$age_recoded_alt <- dplyr::case_when(.$aage >= 17 & .$aage <= 40 ~ 1,
+                                      .$aage >= 41 & .$aage <= 65 ~ 2,
+                                      TRUE ~ as.numeric(.$aage))
+
 ##############################
 ##### Renaming variables #####
 ##############################
