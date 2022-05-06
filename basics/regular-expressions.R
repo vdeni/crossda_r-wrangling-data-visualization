@@ -225,8 +225,39 @@ stringr::str_subset(column_names,
 #############################
 
 # Regular expression have special symbols or expression that define whole classes
-# of characters. There's quite a few available clases, so we'll cover just two
-# basic ones, and one nice extension.
+# of characters. There's quite a few available class, so we'll cover just one
+# 'special' class, two basic ones, and one nice extension.
+
+#####
+# . #
+#####
+
+# The `.` symbol is a wildcard. It matches (almost) any possible character. We
+# use it when we don't care what comes in a certain place. It's often used in
+# this pattern `.*` which states that at a certain point in our regular
+# expression we allow there to be any number of anything (`.` is anything,
+# `*` is zero or more). If we want to match a dot, we have to *escape* the
+# dot symbol by prepending two backslashes (`\`) to it, like this: `\\.`.
+# Let's see some examples.
+
+character_vector <- c('a',
+                      '1',
+                      ' ',
+                      '',
+                      'abcdefgh!!!r',
+                      '.')
+
+stringr::str_detect(character_vector,
+                    '.*')
+
+stringr::str_subset(character_vector,
+                    'a.*')
+
+stringr::str_subset(character_vector,
+                    'a.*r')
+
+stringr::str_subset(character_vector,
+                    '\\.+')
 
 #######
 # \\d #
