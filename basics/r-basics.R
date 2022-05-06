@@ -277,6 +277,10 @@ is.logical(F)
 
 # Next, we take a look at some of the basic data structures in R.
 
+# IMPORTANT: There's also a `factor` data type that's used to represent
+# categorical data, and it's used frequently. This type is covered in the
+# `wrangling/02_transform-data.R` script for convenience.
+
 ###########################
 ##### Data structures #####
 ###########################

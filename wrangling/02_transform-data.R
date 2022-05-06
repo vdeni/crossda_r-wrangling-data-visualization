@@ -525,3 +525,43 @@ dplyr::summarise(.,
 dplyr::summarise(.,
                  age_t1_mean = mean(aage),
                  n_t1 = dplyr::n())
+
+##############################
+##### Value type: factor #####
+##############################
+
+# As was mentioned in the basics of R script, there's another important data
+# type, the `factor`. It's used to represent categorical variables. Let's take
+# a look at some of its features by converting the `asex` variable to a `factor`.
+# We'll extract the variable to a separate `tibble`:
+
+. <- dplyr::select(data_waves_merged,
+                   asex)
+
+# We can use the `as.factor` function to convert `asex` to a factor.
+# We'll store that `factor` in a new column.
+
+.$sex_factor <- as.factor(.$asex)
+
+# Some of the features of `asex` were lost in the conversion. This is fine.
+# We'll restore them, and learn about `factor`s along the way. `factor`s have a
+# special 'levels' property. The levels describe the various values a factor can
+# take. Currently, our levels are just '1' and '2', which isn't useful:
+
+levels(.$sex_factor)
+
+# We can also use the 'levels' function to set the levels for factor.
+
+# be careful to keep the ordering of the new levels the same as the one in the
+# old levels. here, as initially '1' was for 'male' and '2' for 'female', we
+# write
+levels(.$sex_factor) <- c('male', 'female')
+
+# Now, for plotting purposes, we may want to reorder our levels. For example,
+# if we'd like the first bar in a bar chart to represent the number of women in
+# the study, and the second bar in a bar chart to represent the number of men.
+# With the current ordering, as 'male' is listed as the first level, the plotted
+# values would be the other way around. We could do this so:
+
+.$sex_factor <- factor(.$sex_factor,
+                       levels = c('female', 'male'))
