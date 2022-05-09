@@ -184,11 +184,17 @@ dplyr::filter(data_waves_merged,
 
 c('a', 'b', 'c') %in% c('b', 'c', 'd', 'e')
 
-# This also works with nubmers, so we could use it, for example, to subset
+# This also works with numbers, so we could use it, for example, to subset
 # only participants who were 45, 55 or 65 in the first data collection wave:
 
 dplyr::filter(data_waves_merged,
               aage %in% c(45, 55, 65))
+
+# We could also use the negation operator `!` to subset only those participants
+# whose age *isn't* 45, 55 or 65:
+
+dplyr::filter(data_waves_merged,
+              !aage %in% c(45, 55, 65))
 
 # We can also specify ranges of values:
 
