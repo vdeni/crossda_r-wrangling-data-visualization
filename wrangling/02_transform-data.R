@@ -58,8 +58,8 @@ data_waves_merged <- haven::read_sav(here::here('data',
 # `data_waves_merged[c(a:b, c:d, e:f, f:g, ...)]` where each pair of letters
 # denotes a sequence of column indices. This is less cumbersome than writing
 # out all the variable names, but we may end up with wrong columns if the column
-# indices change (for example, because we've deleted one or more columns from the
-# dataset).
+# indices change (for example, because we've deleted one or more columns from
+# the dataset).
 
 # We'll show option (3), just so you have a reference point for the clarity of
 # using `select`. We've mentioned earlier that we can subset rows and columns by

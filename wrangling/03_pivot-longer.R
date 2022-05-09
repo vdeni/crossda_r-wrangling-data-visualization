@@ -23,10 +23,10 @@ data_waves_merged <- haven::read_sav(here::here('data',
 # for some analyses, we'd like to have the data in a long format, where
 # each row contains the data for one point of measurement. Therefore, each
 # participants data is cast over multiple rows of the `tibble`. We can do this
-# with the `pivot_longer` command from the {tidyr} package. We can also go in the
-# opposite direction - from long to wide - which we'll demonstrate later.
+# with the `pivot_longer` command from the {tidyr} package. We can also go in
+# the opposite direction - from long to wide - which we'll demonstrate later.
 
-# Remember that variables from each data collection name are prefixed by a
+# Remember that variable names from each data collection wave are prefixed by a
 # letter: 'a' for the first wave, 'b' for the second, and 'c' for the third. We
 # can use this information to quickly pivot the dataset to the long format, so
 # that each participant gets one row in the dataset for each wave of data
@@ -60,8 +60,8 @@ data_waves_merged <- haven::read_sav(here::here('data',
 # used later to put the information about the data collection wave into a
 # variable. The second group we've defined is '(.*)' which tells `pivot_longer`
 # to accept anything. We'll see what's the point of that next.
-# The finally, we supply a vector of two characters to `names_to`. The first
-# element of the vector is 'wave', and this give the column name where the
+# Finally, we supply a vector of two characters to `names_to`. The first
+# element of the vector is 'wave', and this gives the column name where the
 # values captured by the first group defined in `names_pattern` will be written.
 # In our case, we'll get a column `wave` whose values will be 'a', 'b' or 'c'.
 # The second element of the vector is '.value', which `pivot_longer` interprets
@@ -70,10 +70,10 @@ data_waves_merged <- haven::read_sav(here::here('data',
 # will be written. In our case, '.value' actually stands for multiple column
 # names. Let's see what we get when we run the
 
-. <- tidyr::pivot_longer(.,
-                         cols = dplyr::everything(),
-                         names_pattern = '(a|b|c)(.*)',
-                         names_to = c('wave', '.value'))
+.long <- tidyr::pivot_longer(.,
+                             cols = dplyr::everything(),
+                             names_pattern = '(a|b|c)(.*)',
+                             names_to = c('wave', '.value'))
 
 # What we get is a data frame in the long format. But what we also get are a lot
 # of warnings. They appear because the same variables have different labels in
@@ -87,18 +87,47 @@ unique(.$csex)
 
 # `pivot_longer` is also informing us that it'll use the variable labels from
 # the first variable it encounters; in this case, that's `asex`. Of course,
-# this may not be what we want. The solution using `pivot_longer` is a bit too
-# complicated for this level. However, there is a simple workaround - we can
-# split the dataset into three separate data frames (one for each data collection
-# wave), harmonize the variable names, and then stack them on top of each
-# other using `bind_rows`. This sounds more complicated than it is. Let's see
-# how this could be done. First, we'll just subset the columns of each wave
-# and store them to their own data frames. But before doing that, we'll also
-# readd the participant ID columns, just to ease our orientation in the
-# dataset.
+# this may not be what we want. So, we'll use some of our newly acquired data
+# transformation knowledge to try to hack a solution. Our dataset has both
+# unlabeled and labeled variables; the labeled ones are those that contain
+# value labels, as given in SPSS. We'll try selecting all labeled variables,
+# and transforming them into `factor`s using {haven}s `as_factor` function.
+# We'll use this function because the base R `as.factor` would return numeric
+# factors (e.g. '1' and '2' instead of 'male' and 'female', which would make
+# it difficult to navigate through the dataset).
+
+# We can do this using `mutate` and `across`. Instead of providing a function
+# such as `matches` to `across`, we'll provide the function `is.labelled` from
+# the {haven} package; this function returns `TRUE` if a column is labeled,
+# allowing us to apply our transformation only on those columns. The
+# transformation we'll apply is `as_factor` from the {haven} package, as
+# mentioned earlier.
+
+data_waves_merged <- dplyr::mutate(data_waves_merged,
+                                   across(dplyr::everything(),
+                                          haven::as_factor))
+
+# Trying to use pivot_longer to recast the data as long would face us with an
+# error whose origin, honestly, I haven't been able to pinpoint quickly. If
+# you're interested in tackling it, uncomment the code below and run it:
+
+# tidyr::pivot_longer(data_waves_merged,
+#                     cols = dplyr::everything(),
+#                     names_pattern = '(a|b|c)(.*)',
+#                     names_to = c('wave',
+#                                  '.value'))
+
+# However, there is a simple workaround - we can split the dataset into three
+# separate data frames (one for each data collection wave), harmonize the
+# variable names, and then stack them on top of each other using `bind_rows`.
+# This sounds more complicated than it is. Let's see how this could be done.
+# First, we'll just subset the columns of each wave and store them to their own
+# data frames. But before doing that, we'll also re-add the participant ID
+# columns, just to ease our orientation in the dataset.
 
 data_waves_merged$brid <- data_waves_merged$arid
 data_waves_merged$crid <- data_waves_merged$arid
+
 
 data_wave_1 <- dplyr::select(data_waves_merged,
                              dplyr::matches('^a'))
@@ -134,9 +163,21 @@ data_wave_3 <- dplyr::rename_with(data_wave_3,
 # on top of each other. `bind_rows` will take care of matching the variable
 # names.
 
-dplyr::bind_rows(data_wave_3,
-                 data_wave_2,
-                 data_wave_1)
+data_merged_long <- dplyr::bind_rows(data_wave_1,
+                                     data_wave_2,
+                                     data_wave_3)
+
+# If we now check the `sex` variable, for example, we'll notice that it contains
+# all the labels from all data collection waves:
+
+levels(data_merged_long$sex)
+
+# Even though this workaround seems to work fine, it's pretty hackish. If we
+# wanted to conduct a real analysis outside a workshop context, we'd approach
+# this merge far more carefully. For example, we could subset only the columns
+# we're interested in for a given analysis or visualization, and carefully
+# cast it to a long format, checking all value labels in the process, making
+# sure that no data is lost or corrupted during the transformation.
 
 #############################################
 ##### Converting data from long to wide #####
@@ -164,7 +205,7 @@ dplyr::bind_rows(data_wave_3,
 # which is 'a', 'b' or 'c'. '.value' is, again, a special name which refers to
 # the column names of the variables from which the cell values are being taken.
 
-tidyr::pivot_wider(.,
+tidyr::pivot_wider(.long,
                    id_cols = 'rid',
                    names_from = 'wave',
                    values_from = !matches('rid|wave'),
