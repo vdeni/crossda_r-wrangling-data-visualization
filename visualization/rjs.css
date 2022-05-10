@@ -1,0 +1,30 @@
+.reveal {
+  font-family: "Arial", Helvetica, sans-serif;
+  font-size: 38px;
+  font-weight: normal;
+}
+
+.reveal h1,
+.reveal h2,
+.reveal h3,
+.reveal h4,
+.reveal h5,
+.reveal h6 {
+  margin: 0 0 40px 0;
+  font-family: "Arial", Helvetica, sans-serif;
+  line-height: 0.9em;
+  letter-spacing: normal;
+  text-shadow: none; }
+  
+.reveal h2,
+.reveal h3,
+.reveal h4,
+.reveal h5,
+.reveal h6 {
+  color: #999999;
+}
+
+.reveal section img {
+    border: none;
+    box-shadow: none;
+  }
