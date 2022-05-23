@@ -59,6 +59,27 @@ data_subset_long <- dplyr::rename(data_subset_long,
                                   'sat_task' = '402',
                                   'sat_part' = '407')
 
-data_subset_long <- dplyr::mutate(data_subset_long,
-                                  dplyr::across(!dplyr::matches('^(inv|dsag|sad|age|n_rooms|sat)'),
-                                                as.factor))
+data_subset_long$educ <- ifelse(data_subset_long$educ %in% c(1501, 1502),
+                                1508,
+                                data_subset_long$educ)
+
+data_subset_long$educ <- ifelse(data_subset_long$educ == 99,
+                                NA,
+                                data_subset_long$educ)
+
+data_subset_long <-
+    dplyr::mutate(data_subset_long,
+                  dplyr::across(!dplyr::matches('^(inv|dsag|sad|age|n_rooms|sat|nkids)'),
+                                as.factor))
+
+levels(data_subset_long$sex) <- c('male',
+                                  'female')
+
+levels(data_subset_long$educ) <- c('isc_3a',
+                                   'isc_3b',
+                                   'isc_3c',
+                                   'isc_5a-6',
+                                   'isc_5d',
+                                   'isc_0-2')
+
+levels(data_subset_long$educ) <- levels(data_subset_long$educ)[c(6, 1, 2, 3, 4, 5)]
