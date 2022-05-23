@@ -6,34 +6,81 @@
 ###########################
 
 library(ggplot2)
-library(RColorBrewer)
+library(here)
 
 ##########################################################
 ##### Selection of variables and preparation of data #####
 ##########################################################
 
-# Let's first select a dozen variables from our merged dataset to have an interesting yet manageable set of variables to work with. We'll select some categorical variables like sex, education level, number of children and approximate category of household income. We want some continuous, quantitative variables to work with other than age, so we'll create some. There is a number of sets of items that share content and a scale. We can combine them to represent the theorized underlying construct. We would usually based this part on the empirical assessment of the scale's validity.
+sub_data <- here::here('wrangling',
+                       '04_prepare-visualization-data.R')
+source(sub_data)
 
-# Usually we would have some theoretical framework that should to a large extent dictate the choice of variables for visualization. We can also approach the data from a more exploratory position and use visualization tools accordingly.
+# We will be using our subsetted long data set to have an interesting yet
+# manageable set of variables to work with. We have some categorical variables
+# like sex, education level, number of children and approximate category of
+# household income. We want some continuous, quantitative variables to work with
+# other than age, so we'll create some. There is a number of sets of items that
+# share content and a scale. We can combine them to represent the hypothetical
+# underlying construct. We would usually base this part on the formal
+# measurement model and empirical assessment of the scale's validity.
 
-# Fromnig scale scores
+# Usually we would have some theoretical framework that should to a large extent
+# dictate the choice of variables for visualization. We can also approach the
+# data from a more exploratory position and use visualization tools accordingly.
 
-dissagreements<- dplyr::select(data_waves_merged,
-                    dplyr::matches('^(b)(408_)(a|b|c|d|e|f|i)'))
-dissagreements$dsag<-rowMeans(dissagreements, na.rm = FALSE)
-colSums(is.na(dissagreements))
+### Forming scale scores
+########################
 
-ses<- dplyr::select(data_waves_merged,
-                               dplyr::matches('^(a)(1002|1009|119|1001_i|1001_j)$'))
+### Frequency of disagreements in vrious areas
+# Assemble to own objects to ease handling
+d<- dplyr::select(data_subset_long,
+                    dplyr::matches('^(disagr_)'))
+# Form a total score as mean rating
+d$disagr<-rowMeans(d, na.rm = TRUE)
+# Evaluate number of missing by row
+colSums(is.na(d))
+# And by column
+table(rowSums(is.na(d)))
 
+### Balance in household tasks, 1 - I work much more, 3 - balanced, 5 - partner works much more
+t<- dplyr::select(data_subset_long,
+                       dplyr::matches('^(task_)'))
+t$task<-rowMeans(t, na.rm = TRUE)
 
-mutate(ses, a1001_i=recode(as.factor(a1001_i), '1'=1, .default=0))
-mutate(ses, a1001_j=recode(as.factor(a1001_i), '1'=1, .default=0))
+### Felt sad or depressed in the last week
+s<- dplyr::select(data_subset_long,
+                     dplyr::matches('^(sad_)'))
+s$sad<-rowMeans(s, na.rm = TRUE)
 
-ses$ses<-rowMeans(scale(ses), na.rm = FALSE)
+### Ad hoc custom index of SES
+ses<- select(data_subset_long,
+             n_rooms,
+             hh_ends_meet,
+             hh_income,
+             hh_2_car,
+             hh_2_home)
 
-dff<-tibble(data_waves_merged,"dsag"=dissagreements$dsag,"ses"=ses$ses)
+ses<-mutate_if(ses, is.factor, as.numeric)
+# Invert yes-no into binary variable
+ses$hh_2_car<-(ses$hh_2_car-2) * -1
+ses$hh_2_home<-(ses$hh_2_home-2) * -1
+ses
+colSums(is.na(ses))
+# Calculate SES index as average value across variables
+ses$ses<-rowMeans(scale(ses), na.rm = TRUE)
 
+# Create a new long data frame for use in ggplot
+dfl<-tibble(data_subset_long, "disagr"=d$disagr, "task"=t$task, "ses"=ses$ses, "sad"=s$sad)
+# Create a matching wide data frame
+dfw<-tidyr::pivot_wider(dfl,
+                   id_cols = 'rid',
+                   names_from = 'wave',
+                   values_from = !matches('rid|wave'),
+                   names_glue = '{wave}{.value}')
+
+# We will use the data frames with short names to make the ggplot code more
+# readable
 
 #########################
 ##### ggplot basics #####
@@ -45,33 +92,36 @@ dff<-tibble(data_waves_merged,"dsag"=dissagreements$dsag,"ses"=ses$ses)
 plot(rnorm(100), rnorm(100))
 plot(rnorm(100), rnorm(100), col="orange")
 
+plot(dfw$aage, dfw$adisagr)
+
 ### ggplot
+##########
 
 # Empty canvas
 ggplot()
 
 # Define data
-ggplot(data = dff)
+ggplot(data = dfw)
 
 # map aesthetically age in t1 on the x axis
-ggplot(dff, aes(x=aage))
+ggplot(dfw, aes(x=aage))
 
 # map disagreements to y
-ggplot(dff, aes(x=aage, y=dsag)) +
+ggplot(dfw, aes(x=aage, y=adisagr)) +
     geom_point()
 
 # set graphical parameters: point size, alpha and position
-ggplot(dff, aes(x=aage, y=dsag)) +
+ggplot(dfw, aes(x=aage, y=adisagr)) +
     geom_point(size=3, alpha=0.2, position="jitter")
 
 # Same thing
-ggplot(dff, aes(x=aage, y=dsag)) +
+ggplot(dfw, aes(x=aage, y=adisagr)) +
     geom_jitter(size=3, alpha=0.2)
 
 # Add another layer - new geom
-ggplot(dff, aes(x=aage, y=dsag, col=as.factor(asex))) +
+ggplot(dfw, aes(x=aage, y=adisagr)) +
     geom_jitter(size=3, alpha=0.3) +
-    geom_smooth(method=lm)
+    geom_smooth(method=lm, size=2, col="red")
 
 
 #########################
@@ -83,13 +133,12 @@ ggplot(dff, aes(x=aage, y=dsag, col=as.factor(asex))) +
 
 # Saving intermediate steps
 
-p01<-ggplot(dff, aes(as.factor(asex)))
+p01<-ggplot(dfw, aes(asex))
 
 # Empty bars
 
 p01
 p01 + geom_bar()
-p01
 
 # Edit the values for the bars
 
@@ -103,26 +152,21 @@ p01 + geom_bar(
 
 # We will rarely explicity assign colors, we will use color as a tool
 p01 <- p01 + geom_bar(
-    aes(fill=as.factor(asex)), # Color based on values, new aesthetic mapping
+    aes(fill=asex), # Color based on values, new aesthetic mapping
     width = 0.4,
     alpha = 0.5)
 p01
 
 # The same thing:
-p01<-ggplot(dff, aes(as.factor(asex), fill=as.factor(asex)))
+p01<-ggplot(dfw, aes(asex, fill=asex))
 p01 <- p01 + geom_bar(
     width = 0.4,
     alpha = 0.5)
 p01
 
-# Use color palettes
-p01 + scale_fill_brewer(palette="Dark2")
-p01 <- p01 + scale_fill_brewer(palette="Set1")
-p01 + coord_flip()
-
 # What if we have data in the form of a frequency table?
 
-sumtab<-dplyr::summarise(group_by(dff, asex),
+sumtab<-dplyr::summarise(group_by(dfw, asex),
                          n = dplyr::n())
 sumtab
 
@@ -135,45 +179,24 @@ p02 + geom_bar(stat="identity") # keep original values
 ############################################################################
 
 # Map age at t1 to x
-p03 <- ggplot(dff, aes(aage))
+p03 <- ggplot(dfw, aes(aage))
 p03 + geom_histogram()
 
+# Histogram
 p03 + geom_histogram(
-    bins = 10
+    bins = 14, col = "black"
 )
 
-p03 + geom_density(size=2,alpha = 0.4)
+# Density plot
+p03 + geom_density(adjust = 0.3, size=2)
 
 # Both on the same, chart, we need to match y scales:
-
-p04 <- ggplot(dff, aes(aage))
+p04 <- ggplot(dfw, aes(aage))
 p04 <- p04 + geom_histogram(
     aes(y = ..density..),
-    bins=12)
-p04 + geom_density()
+    bins=14)
+p04 + geom_density(adjust = 0.3, size=2)
 
-### Linegraph
-#############
-
-sumtab<-dplyr::summarise(group_by(df, asex),
-                         across(df),
-                         list('mean' = mean,
-                              'sd' = sd))
-
-sumtab <- summarise(dff,
-          dplyr::across(dplyr::matches('^(a|b|c)407$'),
-                        list('mean' = mean)))
-sumtab
-
-p05<
-
-### Ecercise:
+### Exercise:
 # Plot a frequency chart for level of education
-# Plot a density chart for disagreements, try to find the "adjust" that is illustrative
-
-ggplot(dff, aes(x = dsag))+
-    geom_density(adjust=0.1)
-
-ggplot(dff, aes(x = dsag))+
-    geom_histogram(bins=50)
-
+# Plot a density chart for disagreements, explore the variable with "adjust"
