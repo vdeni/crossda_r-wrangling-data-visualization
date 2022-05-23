@@ -17,7 +17,7 @@ library(RColorBrewer)
 # Usually we would have some theoretical framework that should to a large extent dictate the choice of variables for visualization. We can also approach the data from a more exploratory position and use visualization tools accordingly.
 
 
-# Descriptives: age|sex|numres|parstat|educ|371y|int_pr|710
+# Descriptives: age|sex|numres|parstat|educ|int_pr|n225
 # Scales:
 #   - 401 - perceived balance of investment in the household
 #   - 408 - number of disagreements on various topics
