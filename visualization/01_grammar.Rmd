@@ -1,7 +1,7 @@
 ---
 title: "Intro to visualization in R"
 author: "And Grammar of Graphics!"
-date: "5/25/2022"
+date: "25/5/2022"
 output:
   revealjs::revealjs_presentation:
     theme: simple
@@ -30,7 +30,7 @@ library(psych)
 ## Why is visualization important?
 
 - famous Anscombe's Quartet
-- 4 pairs of X-Y variabls
+- 4 pairs of X-Y variables
 - Same mean(x), sd(x), mean(y), sd(y), cor(x,y)
 
 ## Why is visualization important?
@@ -49,7 +49,7 @@ knitr::include_graphics("anscombe.svg")
 
 ## Why is visualization important?
 
-- summary statistics can decieve!
+- summary statistics can deceive!
 - Exploratory data analyses (Tukey, 1977):
     - "This is my favorite part about analytics: Taking boring flat data and bringing it to life through visualization."
     - "There is no data that can be displayed in a pie chart, that cannot be displayed better in some other type of chart."
@@ -64,7 +64,7 @@ knitr::include_graphics("anscombe.svg")
 
 ## ggplot
 
-- as grammar of graphics implementation
+- a grammar of graphics implementation
 - graphs as objects
 - combining layers one on top of the other
 - saving intermediate steps and building branching graphs
@@ -79,7 +79,7 @@ knitr::include_graphics("anscombe.svg")
     - position (position adjustment to prevent overlap)
 - scale (controls the mapping of data to aes)
 - coordinates (ticks, annotations, title etc.)
-- facets (multiple graphs taht share the above by group members)
+- facets (multiple graphs that share the above by group members)
 
 ## data and mapping (data and aes)
 
@@ -99,12 +99,10 @@ knitr::include_graphics("anscombe.svg")
       - raw vs. summary (stat="identity")
     - point
       - jitter, alpha and size
-    - density plot
-      - alpha, coloring
     - boxplot
       - multiple variables with same scale
-    - lineplot
-      - width, color etc. 
+    - scatterplot
+      - jitter, alpha, size
   
 ## scale
 - controls the mapping from data to aesthetic attributes
@@ -117,4 +115,40 @@ Wickham (2010)
 ```{r, echo=FALSE, fig.pos= "h", out.width = "100%"}
 knitr::include_graphics("scale.png")
 ```
+
+## Variables and charts
+
+## Variable types
+
+- extremely important for the purpose of visualization
+- to understand the metrics, behavior and meaning of variables 
+- allows us to pick the right tool for visualization
+
+## Overlaping categories
+
+- quantitative vs. qualitative
+- continuous vs. discreet
+- categorical vs continuous
+
+## S.S. Stevens (1946)
+
+- nominal - categories or labels
+- ordinal - object ranking, ordered categories
+- interval - distance between objects known
+- scale - have a meaningful absolute zero
+
+## S.S. Stevens in R
+
+- nominal (factor with k levels)
+- ordinal (ordered factor with k levels)
+- interval (numerical: integer or float/double)
+- scale (numerical: integer or float/double)
+
+## S.S. Stevens (1946)
+
+- nominal (factor with k levels)
+- ordinal (ordered factor with k levels)
+- interval (numerical: integer or float/double)
+- scale (numerical: integer or float/double)
+
 
