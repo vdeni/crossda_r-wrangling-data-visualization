@@ -17,13 +17,13 @@ library(RColorBrewer)
 # Usually we would have some theoretical framework that should to a large extent dictate the choice of variables for visualization. We can also approach the data from a more exploratory position and use visualization tools accordingly.
 
 
-# Descriptives: age|sex|numres|parstat|educ|int_pr|n225
+# Descriptives: age|sex|nkids|parstat|educ|int_pr|n225
 # Scales:
 #   - 401 - perceived balance of investment in the household
 #   - 408 - number of disagreements on various topics
 #   - 721 - sadness in the past week
 # ses: 1002|1009|119|1001_i|1001_j
-# Satisfactions: 145|202|402|407
+# Satisfactions: 145|402|407
 
 
 # TODO from long
@@ -80,7 +80,8 @@ hist(df$afloor, breaks=18)
 summary(df$afloor)
 
 #
-407
+
+# 407
 
 ##
 
@@ -91,11 +92,10 @@ summary(df$afloor)
 # R's built in graphical system
 
 # Plots tab in Rstudio - scale, zoom
-
 plot(rnorm(100), rnorm(100))
 plot(rnorm(100), rnorm(100), col="orange")
 
-# ggplot
+### ggplot
 
 # Empty canvas
 ggplot()
@@ -110,13 +110,15 @@ ggplot(dff, aes(x=aage))
 ggplot(dff, aes(x=aage, y=dsag)) +
     geom_point()
 
-#
+# set graphical parameters: point size, alpha and position
 ggplot(dff, aes(x=aage, y=dsag)) +
-    geom_point(size=3, alpha=0.1, position="jitter")
+    geom_point(size=3, alpha=0.2, position="jitter")
 
+# Same thing
 ggplot(dff, aes(x=aage, y=dsag)) +
     geom_jitter(size=3, alpha=0.2)
 
+# Add another layer - new geom
 ggplot(dff, aes(x=aage, y=dsag, col=as.factor(asex))) +
     geom_jitter(size=3, alpha=0.3) +
     geom_smooth(method=lm)

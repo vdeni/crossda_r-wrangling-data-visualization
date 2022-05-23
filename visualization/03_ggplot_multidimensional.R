@@ -6,13 +6,14 @@
 
 library(ggplot2)
 library(RColorBrewer)
+library(GGally)
 
 #####################
 ##### Bivariate #####
 #####################
 
 # stacked bar charts for two categorical variables (nominal, ordinal), summary charts
-
+p01
 p01 + aes(fill=as.factor(numres))
 p01<-p01 + aes(fill=as.factor(aparstat))
 # Nono
@@ -37,8 +38,13 @@ ggplot(dff, aes(x = ses, fill=as.factor(beduc)))+
 
 
 # scatterplot and scatterplot matrix
-
+ggplot(dff, aes(a407,dsag))+
+    geom_point(size=3,alpha=0.2, position="jitter")
 # cor age-dsgr
+
+
+## Scatterplot matrix
+ggpairs()
 
 # Line graph
 
