@@ -9,10 +9,12 @@ data_waves_merged <- haven::read_sav(here::here('data',
 data_subset <-
     dplyr::select(data_waves_merged,
                   dplyr::matches('nkids$'),
+                  dplyr::matches('arid|brid|crid$'),
                   dplyr::matches('(a|b|c)(age|sex|parstat|educ|int_pr|n225)$'),
                   dplyr::matches('401a_[a-g]$|408_[a-i]|.721_?.'),
                   dplyr::matches('(1002|1009|(a|b|c)119|1001_i|1001_j)$'),
                   dplyr::matches('(a|b|c)(145|402|407)$'))
+
 
 data_subset$an225 <- 1
 

@@ -16,17 +16,8 @@ library(RColorBrewer)
 
 # Usually we would have some theoretical framework that should to a large extent dictate the choice of variables for visualization. We can also approach the data from a more exploratory position and use visualization tools accordingly.
 
+# Fromnig scale scores
 
-    # Descriptives: age|sex|nkids|parstat|educ|int_pr|n225
-    # Scales:
-    #   - 401 - perceived balance of investment in the household
-    #   - 408 - number of disagreements on various topics
-    #   - 721 - sadness in the past week
-    # ses: 1002|1009|119|1001_i|1001_j
-    # Satisfactions: 145|402|407
-
-
-# TODO from long
 dissagreements<- dplyr::select(data_waves_merged,
                     dplyr::matches('^(b)(408_)(a|b|c|d|e|f|i)'))
 dissagreements$dsag<-rowMeans(dissagreements, na.rm = FALSE)
@@ -41,49 +32,8 @@ mutate(ses, a1001_j=recode(as.factor(a1001_i), '1'=1, .default=0))
 
 ses$ses<-rowMeans(scale(ses), na.rm = FALSE)
 
-
-
-
 dff<-tibble(data_waves_merged,"dsag"=dissagreements$dsag,"ses"=ses$ses)
 
-# Zakej ovo ne radi?
-dplyr::summarise(dissagreements,
-                 dplyr::across(dplyr::matches('^(a|b|c)'),
-                               list('mean' = mean)))
-
-
-
-df <- dplyr::select(data_waves_merged,
-                dplyr::matches('^(a|b|c)(age|sex|educ|numres|407|370|b1009)$'))
-
-df$a370
-
-ggplot(df, aes(x=as.factor(bnumres))) +
-    geom_bar(aes(fill=as.factor(bsex),))
-
-dplyr::glimpse(df)
-summary(df)
-
-# Renaming
-df <- dplyr::rename(df,
-                   'a_birth_year' = 'abyear',
-                   'b_birth_year' = 'bbyear',
-                   'c_birth_year' = 'cbyear')
-
-df <- dplyr::rename_with(df,
-                        .cols = dplyr::matches('407'),
-                        .fn = stringr::str_replace,
-                        pattern = '407',
-                        replacement = '')
-
-hist(df$afloor, breaks=18)
-summary(df$afloor)
-
-#
-
-# 407
-
-##
 
 #########################
 ##### ggplot basics #####
