@@ -17,13 +17,13 @@ library(RColorBrewer)
 # Usually we would have some theoretical framework that should to a large extent dictate the choice of variables for visualization. We can also approach the data from a more exploratory position and use visualization tools accordingly.
 
 
-# Descriptives: age|sex|nkids|parstat|educ|int_pr|n225
-# Scales:
-#   - 401 - perceived balance of investment in the household
-#   - 408 - number of disagreements on various topics
-#   - 721 - sadness in the past week
-# ses: 1002|1009|119|1001_i|1001_j
-# Satisfactions: 145|402|407
+    # Descriptives: age|sex|nkids|parstat|educ|int_pr|n225
+    # Scales:
+    #   - 401 - perceived balance of investment in the household
+    #   - 408 - number of disagreements on various topics
+    #   - 721 - sadness in the past week
+    # ses: 1002|1009|119|1001_i|1001_j
+    # Satisfactions: 145|402|407
 
 
 # TODO from long
