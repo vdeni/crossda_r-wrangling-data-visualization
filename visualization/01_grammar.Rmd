@@ -116,3 +116,39 @@ Wickham (2010)
 knitr::include_graphics("scale.png")
 ```
 
+## Variables and charts
+
+## Variable types
+
+- extremely important for the purpose of visualization
+- to understand the metrics, behavior and meaning of variables 
+- allows us to pick the right tool for visualization
+
+## Overlaping categories
+
+- quantitative vs. qualitative
+- continuous vs. discreet
+- categorical vs continuous
+
+## S.S. Stevens (1946)
+
+- nominal - categories or labels
+- ordinal - object ranking, ordered categories
+- interval - distance between objects known
+- scale - have a meaningful absolute zero
+
+## S.S. Stevens in R
+
+- nominal (factor with k levels)
+- ordinal (ordered factor with k levels)
+- interval (numerical: integer or float/double)
+- scale (numerical: integer or float/double)
+
+## S.S. Stevens (1946)
+
+- nominal (factor with k levels)
+- ordinal (ordered factor with k levels)
+- interval (numerical: integer or float/double)
+- scale (numerical: integer or float/double)
+
+
