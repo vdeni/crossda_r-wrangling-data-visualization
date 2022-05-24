@@ -7,6 +7,7 @@
 
 library(ggplot2)
 library(here)
+library(psych)
 
 ##########################################################
 ##### Selection of variables and preparation of data #####
@@ -34,23 +35,23 @@ source(sub_data)
 
 ### Frequency of disagreements in vrious areas
 # Assemble to own objects to ease handling
-d<- dplyr::select(data_subset_long,
-                    dplyr::matches('^(disagr_)'))
+d <- select(data_subset_long, matches('^(disagr_)'))
+d
 # Form a total score as mean rating
-d$disagr<-rowMeans(d, na.rm = TRUE)
+d$disagr <- rowMeans(d, na.rm = TRUE)
+d
 # Evaluate number of missing by row
 colSums(is.na(d))
 # And by column
 table(rowSums(is.na(d)))
 
-### Balance in household tasks, 1 - I work much more, 3 - balanced, 5 - partner works much more
-t<- dplyr::select(data_subset_long,
-                       dplyr::matches('^(task_)'))
+### Balance in household tasks, 1 - I work much more, 3 - balanced, 5 - partner
+# works much more
+t <- select(data_subset_long, matches('^(task_)'))
 t$task<-rowMeans(t, na.rm = TRUE)
 
 ### Felt sad or depressed in the last week
-s<- dplyr::select(data_subset_long,
-                     dplyr::matches('^(sad_)'))
+s <- select(data_subset_long, matches('^(sad_)'))
 s$sad<-rowMeans(s, na.rm = TRUE)
 
 ### Ad hoc custom index of SES
@@ -60,18 +61,31 @@ ses<- select(data_subset_long,
              hh_income,
              hh_2_car,
              hh_2_home)
-
+# Show levels as numerci values
 ses<-mutate_if(ses, is.factor, as.numeric)
+ses
 # Invert yes-no into binary variable
 ses$hh_2_car<-(ses$hh_2_car-2) * -1
 ses$hh_2_home<-(ses$hh_2_home-2) * -1
 ses
-colSums(is.na(ses))
-# Calculate SES index as average value across variables
+
+# Calculate SES index as average value across standardized variables
 ses$ses<-rowMeans(scale(ses), na.rm = TRUE)
 
 # Create a new long data frame for use in ggplot
-dfl<-tibble(data_subset_long, "disagr"=d$disagr, "task"=t$task, "ses"=ses$ses, "sad"=s$sad)
+dfl<-tibble(data_subset_long,
+            "disagr" = d$disagr,
+            "task" = t$task,
+            "sad" = s$sad,
+            "ses" = ses$ses)
+# Amount of missing data
+mis<-rowSums(is.na(dfl))
+
+# Plot using R base graphics
+hist(mis)
+
+describe(dfl)
+
 # Create a matching wide data frame
 dfw<-tidyr::pivot_wider(dfl,
                    id_cols = 'rid',
@@ -89,9 +103,6 @@ dfw<-tidyr::pivot_wider(dfl,
 # R's built in graphical system
 
 # Plots tab in Rstudio - scale, zoom
-plot(rnorm(100), rnorm(100))
-plot(rnorm(100), rnorm(100), col="orange")
-
 plot(dfw$aage, dfw$adisagr)
 
 ### ggplot
@@ -105,6 +116,14 @@ ggplot(data = dfw)
 
 # map aesthetically age in t1 on the x axis
 ggplot(dfw, aes(x=aage))
+
+# Draw on the canvas
+ggplot(dfw, aes(x=aage)) +
+    # draw on the canvas
+    geom_vline(xintercept = 50) +
+    # modify the scale of the x axis
+    xlim(10,100) +
+    geom_vline(xintercept = 50, col="blue", size=2)
 
 # map disagreements to y
 ggplot(dfw, aes(x=aage, y=adisagr)) +
@@ -136,7 +155,6 @@ ggplot(dfw, aes(x=aage, y=adisagr)) +
 p01<-ggplot(dfw, aes(asex))
 
 # Empty bars
-
 p01
 p01 + geom_bar()
 
@@ -165,9 +183,8 @@ p01 <- p01 + geom_bar(
 p01
 
 # What if we have data in the form of a frequency table?
-
-sumtab<-dplyr::summarise(group_by(dfw, asex),
-                         n = dplyr::n())
+# Set grouping b<y sex and calculate subsample sizes
+sumtab<-summarise(group_by(dfw, asex), n = dplyr::n())
 sumtab
 
 # We use stat identity to tell ggplot to use actual values, not a summary
@@ -194,7 +211,7 @@ p03 + geom_density(adjust = 0.3, size=2)
 p04 <- ggplot(dfw, aes(aage))
 p04 <- p04 + geom_histogram(
     aes(y = ..density..),
-    bins=14)
+    bins=14, col = "black")
 p04 + geom_density(adjust = 0.3, size=2)
 
 ### Exercise:
