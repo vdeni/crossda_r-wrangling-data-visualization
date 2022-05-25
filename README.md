@@ -32,8 +32,12 @@ data from the *Generations & Gender Survey*, Round 1:
 
 ## Useful resources
 
-- [RStudio cheat sheets](https://www.rstudio.com/resources/cheatsheets/)
+- [RStudio cheat sheets](https://www.rstudio.com/resources/cheatsheets/) giving
+    an overview of many packages from the `tidyverse` ecosystem
 - [regular expressions cheat sheet](https://remram44.github.io/regex-cheatsheet/regex.html)
 - [R for Data Science](https://r4ds.had.co.nz/) free online book
+- [Introduction to Statistical Learning](https://www.statlearning.com/) free
+    book, available online. Covers a lot of statistical methods with examples
+    coded up in R.
 
 ## Directory structure
