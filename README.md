@@ -45,6 +45,7 @@ data from the *Generations & Gender Survey*, Round 1:
 **Note**: `data/` is where you should put your data files obtained from the
 GGP website; not present in the repository.
 
+```
 .
 ├── basics
 │   ├── 01_r-basics_live.R
@@ -75,3 +76,4 @@ GGP website; not present in the repository.
     ├── 03_pivot-longer_live.R
     ├── 03_pivot-longer.R
     └── 04_prepare-visualization-data.R
+```
