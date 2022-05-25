@@ -204,7 +204,13 @@ ggplot2::ggplot(dfw,
 d <- dplyr::select(data_subset_long,
                    dplyr::matches('^disagr_|rid'))
 
-md <- melt(d)
+md <- reshape2::melt(d)
+
+# alternatively:
+# md <- tidyr::pivot_longer(d,
+#                           cols = dplyr::everything())
+# NOTE: the column names will be `name` and `value` instead of
+# `variable` and `value`
 
 ggplot2::ggplot(md,
                 ggplot2::aes(variable,
