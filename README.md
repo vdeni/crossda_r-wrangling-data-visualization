@@ -41,3 +41,37 @@ data from the *Generations & Gender Survey*, Round 1:
     coded up in R.
 
 ## Directory structure
+
+**Note**: `data/` is where you should put your data files obtained from the
+GGP website; not present in the repository.
+
+.
+├── basics
+│   ├── 01_r-basics_live.R
+│   ├── 01_r-basics.R
+│   ├── 02_regular-expressions_live.R
+│   └── 02_regular-expressions.R
+├── crossda_r-wrangling-data-visualization.Rproj
+├── data
+│   ├── France_Wave2_V.1.3.sav
+│   ├── GGS_Wave1_France_V.4.4.sav
+│   └── GGS_Wave3_France_V.1.0.sav
+├── README.md
+├── visualization
+│   ├── 01_grammar.html
+│   ├── 01_grammar.Rmd
+│   ├── 02_ggplot_basics.R
+│   ├── 03_ggplot_multidimensional.R
+│   ├── 04_ggplot_customization.R
+│   ├── anscombe.svg
+│   ├── RcolorBrewer.png
+│   ├── rjs.css
+│   └── scale.png
+└── wrangling
+    ├── 01_read-data_merge_live.R
+    ├── 01_read-data_merge.R
+    ├── 02_transform-data_live.R
+    ├── 02_transform-data.R
+    ├── 03_pivot-longer_live.R
+    ├── 03_pivot-longer.R
+    └── 04_prepare-visualization-data.R
