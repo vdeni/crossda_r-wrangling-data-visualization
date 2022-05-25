@@ -144,11 +144,7 @@ knitr::include_graphics("scale.png")
 - interval (numerical: integer or float/double)
 - scale (numerical: integer or float/double)
 
-## S.S. Stevens (1946)
+## What can we do in ggplot?
 
-- nominal (factor with k levels)
-- ordinal (ordered factor with k levels)
-- interval (numerical: integer or float/double)
-- scale (numerical: integer or float/double)
 
 
