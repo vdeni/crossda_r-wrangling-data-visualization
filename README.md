@@ -39,6 +39,8 @@ data from the *Generations & Gender Survey*, Round 1:
 - [Introduction to Statistical Learning](https://www.statlearning.com/) free
     book, available online. Covers a lot of statistical methods with examples
     coded up in R.
+- [Grat series of blog posts](https://suzanbaert.netlify.app/2018/01/dplyr-tutorial-1/) on
+    data wrangling using dplyr and other tidyverse packages.
 
 ## Directory structure
 
