@@ -232,7 +232,7 @@ our_animals[2^2 - 1]
 # However, we could also to that *without storing* the length in a separate
 # variable:
 
-our.animals[length(our.animals)]
+our_animals[length(our_animals)]
 
 # Keep in mind: the square brackets work because we've stored a vector in the
 # `our.animals` variable, and the square bracket notation allows us to access
